@@ -27,8 +27,10 @@ public class ProductoService {
         Producto p = obtenerPorId(id);
         if (p != null) {
             p.setNombre(datos.getNombre());
+            p.setImagen(datos.getImagen());
             p.setPrecio(datos.getPrecio());
             p.setStock(datos.getStock());
+            p.setCuotas(datos.getCuotas());
             return repo.save(p);
         }
         return null;

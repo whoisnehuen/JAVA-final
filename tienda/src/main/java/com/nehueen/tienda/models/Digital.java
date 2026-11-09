@@ -12,10 +12,10 @@ public class Digital extends Producto{
     private String licencia;
     private String desarrollador;
     protected Digital() {
-        super("", "", 0, 0, 0);
+        super("", "", 0, 0, 0, "");
     }
-    public Digital(String nombre, String imagen, double precio, int stock, int cuotas, String plataforma, String licencia, String desarrollador) {
-        super(nombre, imagen, precio, stock, cuotas);
+    public Digital(String nombre, String imagen, double precio, int stock, int cuotas, String info, String plataforma, String licencia, String desarrollador) {
+        super(nombre, imagen, precio, stock, cuotas, info);
         this.plataforma = plataforma;
         this.licencia = licencia;
         this.desarrollador = desarrollador;

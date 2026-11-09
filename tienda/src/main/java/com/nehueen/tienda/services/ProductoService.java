@@ -31,6 +31,7 @@ public class ProductoService {
             p.setPrecio(datos.getPrecio());
             p.setStock(datos.getStock());
             p.setCuotas(datos.getCuotas());
+            p.setInfo(datos.getInfo());
             return repo.save(p);
         }
         return null;
@@ -42,17 +43,6 @@ public class ProductoService {
         }
         return false;
     }
-
-    /* public Producto guardar(String tipo, String nombre, double precio, int stock) {
-        Producto p;
-        if (tipo.equalsIgnoreCase("Te")) {
-            p = new Te(nombre, precio, stock);
-        } else {
-            p = new Cafe(nombre, precio, stock);
-        }
-        Catalogo.productos.add(p);
-        return p;
-    } */
 }
 
  

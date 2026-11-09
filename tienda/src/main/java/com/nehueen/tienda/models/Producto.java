@@ -26,11 +26,13 @@ public abstract class Producto {
     protected double precio;
     private int stock;
     private int cuotas;
-    public Producto(String nombre, String imagen, double precio, int stock, int cuotas) {
+    private String info;
+    public Producto(String nombre, String imagen, double precio, int stock, int cuotas, String info) {
         this.nombre = nombre;
         this.imagen = imagen;
         this.precio = precio;
         this.stock = stock;
         this.cuotas = cuotas;
+        this.info = info;
     }
 }

@@ -12,10 +12,10 @@ public class Fisico extends Producto {
     private String color;
     private String marca;
     protected Fisico() {
-        super("", "", 0, 0, 0);
+        super("", "", 0, 0, 0, "");
     }
-    public Fisico(String nombre, String imagen, double precio, int stock, int cuotas, boolean envioGratis, String color, String marca) {
-        super(nombre, imagen, precio, stock, cuotas);
+    public Fisico(String nombre, String imagen, double precio, int stock, int cuotas, String info, boolean envioGratis, String color, String marca) {
+        super(nombre, imagen, precio, stock, cuotas, info);
         this.envioGratis = envioGratis;
         this.color = color;
         this.marca = marca;

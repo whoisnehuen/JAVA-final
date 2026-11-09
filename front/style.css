@@ -202,6 +202,30 @@ footer {
     border-radius: 10px;
 }
 
+#modalBod {
+    color: #000000;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.873);
+    z-index: 1000;
+    padding-top: 50px;
+}
+
+#contenidoModalBod {
+    color: #000000;
+    background-color:  #07659b;
+    margin: auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+
+
 /* Diseño para pantallas pequeñas (móviles) */
 @media (max-width: 600px) {
     #contenedor {

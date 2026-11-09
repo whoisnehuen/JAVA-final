@@ -1,7 +1,9 @@
 productos = [];
 
 const botonCarrito = document.getElementById('botonCarrito');
+const botonBodega = document.getElementById('botonBodega');
 const modal = document.getElementById('modal');
+const modalBod = document.getElementById('modalBod');
 const containerProductos = document.getElementById('productos');
 const botonParaCerrar = document.querySelector('.close');
 
@@ -10,8 +12,13 @@ botonCarrito.addEventListener('click', () => {
     modal.style.display = 'block';
 });
 
+botonBodega.addEventListener('click', () => {
+    modalBod.style.display = 'block';
+});
+
 botonParaCerrar.addEventListener('click', () => {
     modal.style.display = 'none';
+    modalBod.style.display = 'none';
 });
 
 window.addEventListener('click', (event) => {
@@ -85,3 +92,36 @@ function decrementQuantity(title) {
         updateCartCount();
     }
 }
+
+
+
+document.getElementById('btnBodega').addEventListener('click', () => {
+    modalBod.style.display = 'block';
+});
+
+document.getElementById('formNuevo').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const f = e.target;
+    const nuevo = {
+        nombre: f.nombre.value,
+        imagen: f.imagen.value,
+        marca: f.marca.value,
+        modelo: f.modelo.value,
+        color: f.color.value || null,
+        precio: Number(f.precio.value),
+        cuotas: parseInt(f.cuotas.value) || 0,
+        stock: parseInt(f.stock.value) || 0,
+        envioGratis: f.envioGratis.checked
+    };
+
+    const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(nuevo)
+    });
+
+    if (!res.ok) { alert('No se pudo guardar el producto'); return; }
+    f.reset();
+    modalBod.style.display = 'none';
+    cargarProductos();
+});

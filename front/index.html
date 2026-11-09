@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-comerce</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/a8f2eb1ed9.js" crossorigin="anonymous"></script>
+    <link rel="icon" type="image/x-icon" href="./img/dinero.png">
+</head>
+<body>
+    <header>
+        <h1>TiendaGamer</h1>
+        <br>
+        <button id = "botonCarrito" class="btn-carrito">
+            <i class="fa-solid fa-cart-shopping fa-beat-fade"></i> Carrito (<span id = "cantidadProductos"> 0 </span> Productos)
+        </button>
+        <br>
+        <ul>
+            <li><a href="#"><i class="fa-solid fa-house"></i> Inicio</a></li>
+            <li><a href="#" onclick="noDisponible()"><i class="fa-solid fa-bars"></i> Categorias</a></li>
+            <li><a href="#" id="ofertas" onclick="noDisponible()"><i class="fa-solid fa-exclamation fa-shake"></i> Ofertas</a></li>
+        </ul>
+
+        <div id = "modal">
+            <div id = "contenidoModal">
+                <span class = "close"></span>
+                <h2>Tu Carrito</h2>
+                <div id = "productos"></div>
+                <p id = "carritoTotal"> Total: $0.00</p>
+                <button onclick="noDisponible()">Ir a pagar</button>
+            </div>
+        </div>
+
+    </header>
+    <div id="contenedor">
+    </div>
+
+    <footer>
+        <div class="footer-contenido">
+            <div class="footer-seccion">
+                <h3>Sobre Nosotros</h3>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim aeque doleamus animo, cum corpore dolemus, fieri tamen permagna accessio potest, si aliquod aeternum et infinitum impendere malum nobis opinemur. Quod idem licet transferre in voluptatem.</p>
+            </div>
+            
+            <div class="footer-seccion">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="#inicio">Inicio</a></li>
+                    <li><a href="#productos">Productos</a></li>
+                    <li><a href="#contacto">Contacto</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+    
+            <div class="footer-seccion">
+                <h3>Seguime</h3>
+                <ul class="social">
+                    <li><a href="https://github.com/whoisnehuen" target="_blank">Github</a></li>
+                    <li><a href="#">Tiktok</a></li>
+                    <li><a href="https://instagram.com/espinaca8_" target="_blank">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-copyright">
+            <p>&copy; 2024 Nehuen's. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
+
+    <script src="main.js"></script>
+    <script src="productos.js"></script>
+</body>
+</html>

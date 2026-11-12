@@ -18,7 +18,7 @@ import com.nehueen.tienda.services.ProductoService;
 
 @RestController
 @RequestMapping("/productos")
-@CrossOrigin(origins = "http://localhost:8365")
+@CrossOrigin(origins = "*")
 public class ProductoController {
     final ProductoService productoService;
     @Autowired

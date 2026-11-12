@@ -11,7 +11,7 @@ export default function ProductDetail({ addToCart }) {
 
   useEffect(() => {
     // Acá pedimos el producto a tu backend en Java
-    fetch(`http://localhost:6767/productos/${id}`)
+    fetch(`https://tiendaapi-xrv5.onrender.com/productos/${id}`)
       .then(res => {
         if (!res.ok) throw new Error("Producto no encontrado");
         return res.json();

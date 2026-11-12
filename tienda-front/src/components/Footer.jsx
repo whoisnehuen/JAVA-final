@@ -22,13 +22,13 @@ export default function Footer() {
           <ul className="social">
             <li><a href="https://github.com/whoisnehuen" target="_blank" rel="noopener noreferrer">Github</a></li>
             <li><a href="#">Tiktok</a></li>
-            <li><a href="https://instagram.com/espinaca8_" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+            <li><a href="https://instagram.com/bach.nehuen8" target="_blank" rel="noopener noreferrer">Instagram</a></li>
           </ul>
         </div>
       </div>
       
       <div className="footer-copyright">
-        <p>&copy; 2024 Nehuen's. Todos los derechos reservados.</p>
+        <p>&copy; 2026 Nehuen's. Todos los derechos reservados.</p>
       </div>
     </footer>
   );

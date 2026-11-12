@@ -9,7 +9,7 @@ export default function Home({ addToCart }) {
 
   // Hacemos el GET a Java al cargar la pantalla
   useEffect(() => {
-    fetch('http://localhost:6767/productos')
+    fetch('https://tiendaapi-xrv5.onrender.com/productos')
       .then(res => {
         if (!res.ok) throw new Error("Error en la respuesta del servidor");
         return res.json();

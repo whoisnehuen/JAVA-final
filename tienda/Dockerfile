@@ -1,11 +1,11 @@
-# Etapa de construcción (usamos Maven con Java 25)
-FROM maven:3.9-eclipse-temurin-25 AS build
+# Etapa de construcción
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 COPY . .
 RUN mvn clean package -DskipTests
 
-# Etapa de ejecución (usamos solo el entorno de ejecución de Java 25 para que sea más liviano)
-FROM eclipse-temurin:25-jre
+# Etapa de ejecución
+FROM openjdk:17.0.1-jdk-slim
 WORKDIR /app
 COPY --from=build /app/target/*-SNAPSHOT.jar app.jar
 EXPOSE 8080

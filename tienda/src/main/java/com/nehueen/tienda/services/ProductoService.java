@@ -32,6 +32,16 @@ public class ProductoService {
             p.setStock(datos.getStock());
             p.setCuotas(datos.getCuotas());
             p.setInfo(datos.getInfo());
+            if (p instanceof Fisico f && datos instanceof Fisico d){
+                f.setEnvioGratis(d.isEnvioGratis());
+                f.setColor(d.getColor());
+                f.setMarca(d.getMarca());
+            }
+            if (p instanceof Digital dig && datos instanceof Digital d) {
+                dig.setPlataforma(d.getPlataforma());
+                dig.setLicencia(d.getLicencia());
+                dig.setDesarrollador(d.getDesarrollador());
+            }
             return repo.save(p);
         }
         return null;

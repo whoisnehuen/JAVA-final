@@ -4,8 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.nehueen.tienda.exceptions.ProductoNoEncontradoException;
 import com.nehueen.tienda.models.*;
+import com.nehueen.tienda.repository.Catalogo;
 
 @Service
 public class ProductoService {
@@ -18,7 +19,8 @@ public class ProductoService {
         return repo.findAll();
     }
     public Producto obtenerPorId(int id) {
-        return repo.findById(id).orElse(null);
+        return repo.findById(id)
+                .orElseThrow(() -> new ProductoNoEncontradoException(id));
     }
     public Producto guardar(Producto p) {
         return repo.save(p);
@@ -46,12 +48,11 @@ public class ProductoService {
         }
         return null;
     }
-    public boolean eliminar(int id) {
-        if (repo.existsById(id)) {
-            repo.deleteById(id);
-            return true;
+    public void eliminar(int id) {
+        if (!repo.existsById(id)) {
+            throw new ProductoNoEncontradoException(id);
         }
-        return false;
+        repo.deleteById(id);
     }
 }
 

@@ -3,6 +3,8 @@ package com.nehueen.tienda.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nehueen.tienda.models.*;
 import com.nehueen.tienda.services.ProductoService;
 
+import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/productos")
 @CrossOrigin(origins = "*")
@@ -26,53 +29,26 @@ public class ProductoController {
         this.productoService = productoService;
     }
     @GetMapping
-    public List<Producto> listarProductos() {
-        return productoService.listarTodos();
+    public ResponseEntity<List<Producto>> listarProductos() {
+        return ResponseEntity.ok(productoService.listarTodos());
     }
     @GetMapping("/{id}")
-    public Producto obtenerProducto(@PathVariable int id) {
-        return productoService.obtenerPorId(id);
+    public ResponseEntity<Producto> obtenerProducto(@PathVariable int id) {
+        return ResponseEntity.ok(productoService.obtenerPorId(id));
     }
     @PostMapping
-    public Producto crearProducto(@RequestBody Producto nuevo) {
-        return productoService.guardar(nuevo);
+    public ResponseEntity<Producto> crearProducto(@Valid @RequestBody Producto nuevo) {
+        Producto creado = productoService.guardar(nuevo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
     @PutMapping("/{id}")
-    public Producto actualizarProducto(@PathVariable int id, @RequestBody Producto datos) {
-        return productoService.actualizar(id, datos);
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable int id, @Valid @RequestBody Producto datos) {
+        return ResponseEntity.ok(productoService.actualizar(id, datos));
     }
     @DeleteMapping("/{id}")
-    public void eliminarProducto(@PathVariable int id) {
+    public ResponseEntity<Void> eliminarProducto(@PathVariable int id) {
         productoService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
-
-
-    /* public record ProductoRequest(String tipo, String nombre, double precio, int stock) {}
-    private final ProductoService productoService;
-
-    public ProductoController(ProductoService productoService) {
-        this.productoService = productoService;
-    }
-
-    @GetMapping
-    public List<Producto> listarProductos() {
-        return productoService.listarTodos();
-    }
-    @GetMapping("/{id}")
-    public Producto obtenerProducto(@PathVariable int id) {
-        return productoService.obtenerPorId(id);
-    }
-    @PostMapping
-    public Producto crearProducto(@RequestBody ProductoRequest nuevoProducto) {
-        return productoService.guardar(
-                nuevoProducto.tipo(),
-                nuevoProducto.nombre(),
-                nuevoProducto.precio(),
-                nuevoProducto.stock());
-    }
-    @GetMapping("/eliminar/{id}")
-    public boolean eliminarProducto(@PathVariable int id) {
-        return productoService.eliminar(id);
-    } */
 
 }

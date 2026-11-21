@@ -1,18 +1,57 @@
 import { useState, useEffect } from 'react';
 import { API_URL } from '../config';
 
+const estiloBotonModo = (activo) => ({
+  backgroundColor: activo ? '#ffbb00' : 'white',
+  padding: '10px 20px',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  fontWeight: 'bold'
+});
+
+const estiloBotonEnviar = {
+  backgroundColor: '#ffbb00',
+  padding: '10px',
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  fontWeight: 'bold'
+};
+
+const formularioVacio = {
+  tipo: 'fisico',
+  nombre: '', info: '', imagen: '', precio: '', cuotas: 0, stock: 0,
+  marca: '', color: '', envioGratis: false,
+  plataforma: '', licencia: '', desarrollador: ''
+};
+
 export default function AdminBodega() {
   const [modo, setModo] = useState('agregar');
 
   // ==========================================
+  // LISTA DE PRODUCTOS (para actualizar y eliminar)
+  // ==========================================
+  const [productosApi, setProductosApi] = useState([]);
+
+  const cargarProductos = () => {
+    fetch(`${API_URL}/productos`)
+      .then(res => res.json())
+      .then(data => setProductosApi(data))
+      .catch(err => console.error("Error trayendo productos de la API:", err));
+  };
+
+  // Cuando se abre "Actualizar" o "Eliminar", traemos los productos de la API
+  useEffect(() => {
+    if (modo === 'actualizar' || modo === 'eliminar') {
+      cargarProductos();
+    }
+  }, [modo]);
+
+  // ==========================================
   // LÓGICA PARA AGREGAR (POST)
   // ==========================================
-  const [formData, setFormData] = useState({
-    tipo: 'fisico', 
-    nombre: '', info: '', imagen: '', precio: '', cuotas: 0, stock: 0,
-    marca: '', color: '', envio: false,
-    plataforma: '', licencia: '', desarrollador: ''
-  });
+  const [formData, setFormData] = useState(formularioVacio);
 
   const handleChangeAgregar = (e) => {
     const { name, value, type, checked } = e.target;
@@ -21,26 +60,23 @@ export default function AdminBodega() {
 
   const handleSubmitAgregar = async (e) => {
     e.preventDefault();
-    
+
     const productoBase = {
       tipo: formData.tipo,
       nombre: formData.nombre,
-      info: formData.info, // Campo nuevo
+      info: formData.info,
       imagen: formData.imagen,
       precio: Number(formData.precio),
       cuotas: Number(formData.cuotas),
       stock: Number(formData.stock),
     };
 
-
-
-    
-    const payloadBackend = formData.tipo === 'fisico' 
-      ? { ...productoBase, marca: formData.marca, color: formData.color, envio: formData.envio }
+    // El backend espera "envioGratis" (así se llama el campo en Fisico.java)
+    const payloadBackend = formData.tipo === 'fisico'
+      ? { ...productoBase, marca: formData.marca, color: formData.color, envioGratis: formData.envioGratis }
       : { ...productoBase, plataforma: formData.plataforma, licencia: formData.licencia, desarrollador: formData.desarrollador };
 
     try {
-      // Conexión real a tu API en Java
       const res = await fetch(`${API_URL}/productos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -49,9 +85,9 @@ export default function AdminBodega() {
 
       if (!res.ok) throw new Error('Error en el servidor');
       alert('Producto agregado exitosamente en la base de datos');
-      
-      // Limpiamos el formulario
-      setFormData({ ...formData, nombre: '', info: '', precio: '', stock: '' });
+
+      // Limpiamos el formulario (mantenemos el tipo elegido)
+      setFormData({ ...formularioVacio, tipo: formData.tipo });
     } catch (error) {
       alert('Error al conectar con la API: ' + error.message);
     }
@@ -60,29 +96,22 @@ export default function AdminBodega() {
   // ==========================================
   // LÓGICA PARA ACTUALIZAR (PUT)
   // ==========================================
-  const [productosApi, setProductosApi] = useState([]); // Guarda lo que devuelve el GET
   const [productoSeleccionado, setProductoSeleccionado] = useState('');
-  const [updateData, setUpdateData] = useState({ precio: '', stock: '', cuotas: 0, envio: false, tipo: '' });
-
-  // Cuando se abre la pestaña "Actualizar", hacemos un GET a la API
-  useEffect(() => {
-    if (modo === 'actualizar') {
-      fetch(`${API_URL}/productos`)
-        .then(res => res.json())
-        .then(data => setProductosApi(data))
-        .catch(err => console.error("Error trayendo productos de la API:", err));
-    }
-  }, [modo]);
+  const [updateData, setUpdateData] = useState({ precio: '', stock: '', cuotas: 0, envioGratis: false, tipo: '' });
 
   const handleSelectChange = (e) => {
     const id = e.target.value;
     setProductoSeleccionado(id);
-    
+
     // Autocompletamos con los datos que trajo la API
-    const prod = productosApi.find(p => p.id === Number(id) || p.id === id);
+    const prod = productosApi.find(p => p.id === Number(id));
     if (prod) {
-      setUpdateData({ 
-        precio: prod.precio, stock: prod.stock, cuotas: prod.cuotas, envio: prod.envio || false, tipo: prod.tipo 
+      setUpdateData({
+        precio: prod.precio,
+        stock: prod.stock,
+        cuotas: prod.cuotas,
+        envioGratis: prod.envioGratis || false,
+        tipo: prod.tipo
       });
     }
   };
@@ -92,40 +121,70 @@ export default function AdminBodega() {
     setUpdateData({ ...updateData, [name]: type === 'checkbox' ? checked : value });
   };
 
-const handleSubmitActualizar = async (e) => {
+  const handleSubmitActualizar = async (e) => {
     e.preventDefault();
     try {
-      const productoOriginal = productosApi.find(p => p.id == productoSeleccionado);
+      const productoOriginal = productosApi.find(p => p.id === Number(productoSeleccionado));
 
       const payloadCompleto = {
-         ...productoOriginal,
-         tipo: productoOriginal.tipo || updateData.tipo, // <-- FORZAMOS QUE VIAJE EL TIPO
-         precio: Number(updateData.precio),
-         stock: Number(updateData.stock),
-         cuotas: Number(updateData.cuotas),
-         envio: updateData.envio
+        ...productoOriginal,
+        tipo: productoOriginal.tipo || updateData.tipo,
+        precio: Number(updateData.precio),
+        stock: Number(updateData.stock),
+        cuotas: Number(updateData.cuotas),
+        envioGratis: updateData.envioGratis
       };
 
       const res = await fetch(`${API_URL}/productos/${productoSeleccionado}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payloadCompleto) 
+        body: JSON.stringify(payloadCompleto)
       });
 
       if (!res.ok) throw new Error('Error en el servidor');
       alert('Base de datos actualizada correctamente');
+      cargarProductos();
     } catch (error) {
       alert('Error: ' + error.message);
     }
   };
 
+  // ==========================================
+  // LÓGICA PARA ELIMINAR (DELETE)
+  // ==========================================
+  const [productoAEliminar, setProductoAEliminar] = useState('');
+
+  const handleSubmitEliminar = async (e) => {
+    e.preventDefault();
+    const prod = productosApi.find(p => p.id === Number(productoAEliminar));
+    if (!prod) return;
+
+    if (!confirm(`¿Seguro que querés eliminar "${prod.nombre}"? No se puede deshacer.`)) return;
+
+    try {
+      const res = await fetch(`${API_URL}/productos/${productoAEliminar}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) throw new Error('Error en el servidor');
+      alert('Producto eliminado correctamente');
+      setProductoAEliminar('');
+      cargarProductos();
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  };
+
+  const productoParaBorrar = productosApi.find(p => p.id === Number(productoAEliminar));
+
   return (
     <div id="contenidoModalBod" style={{ margin: '50px auto', padding: '20px' }}>
       <h2 style={{ color: 'white', textAlign: 'center' }}>Gestión de Bodega</h2>
-      
-      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginBottom: '25px' }}>
-        <button onClick={() => setModo('agregar')} style={{ backgroundColor: modo === 'agregar' ? '#ffbb00' : 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Agregar Producto</button>
-        <button onClick={() => setModo('actualizar')} style={{ backgroundColor: modo === 'actualizar' ? '#ffbb00' : 'white', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Actualizar Producto</button>
+
+      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '25px' }}>
+        <button onClick={() => setModo('agregar')} style={estiloBotonModo(modo === 'agregar')}>Agregar Producto</button>
+        <button onClick={() => setModo('actualizar')} style={estiloBotonModo(modo === 'actualizar')}>Actualizar Producto</button>
+        <button onClick={() => setModo('eliminar')} style={estiloBotonModo(modo === 'eliminar')}>Eliminar Producto</button>
       </div>
 
       {/* FORMULARIO AGREGAR */}
@@ -140,10 +199,7 @@ const handleSubmitActualizar = async (e) => {
           </div>
 
           <input name="nombre" placeholder="Nombre" value={formData.nombre} required onChange={handleChangeAgregar} />
-          
-          {/* Nuevo campo Descripción */}
           <textarea name="info" placeholder="Descripción detallada del producto..." value={formData.info} required onChange={handleChangeAgregar} style={{ padding: '10px', borderRadius: '5px', minHeight: '80px', fontFamily: 'inherit' }} />
-          
           <input name="imagen" placeholder="URL imagen" value={formData.imagen} required onChange={handleChangeAgregar} />
           <input name="precio" type="number" step="0.01" min="0" placeholder="Precio ($)" value={formData.precio} required onChange={handleChangeAgregar} />
           <input name="cuotas" type="number" min="0" placeholder="Cuotas" value={formData.cuotas} onChange={handleChangeAgregar} />
@@ -153,20 +209,22 @@ const handleSubmitActualizar = async (e) => {
 
           {formData.tipo === 'fisico' && (
             <>
-              <input name="marca" placeholder="Marca" required onChange={handleChangeAgregar} />
-              <input name="color" placeholder="Color" required onChange={handleChangeAgregar} />
-              <label style={{ color: 'white' }}><input name="envio" type="checkbox" checked={formData.envio} onChange={handleChangeAgregar} /> Habilitar envío</label>
+              <input name="marca" placeholder="Marca" value={formData.marca} required onChange={handleChangeAgregar} />
+              <input name="color" placeholder="Color" value={formData.color} required onChange={handleChangeAgregar} />
+              <label style={{ color: 'white' }}>
+                <input name="envioGratis" type="checkbox" checked={formData.envioGratis} onChange={handleChangeAgregar} /> Envío gratis
+              </label>
             </>
           )}
 
           {formData.tipo === 'digital' && (
             <>
-              <input name="plataforma" placeholder="Plataforma" required onChange={handleChangeAgregar} />
-              <input name="licencia" placeholder="Licencia" required onChange={handleChangeAgregar} />
-              <input name="desarrollador" placeholder="Desarrollador" required onChange={handleChangeAgregar} />
+              <input name="plataforma" placeholder="Plataforma" value={formData.plataforma} required onChange={handleChangeAgregar} />
+              <input name="licencia" placeholder="Licencia" value={formData.licencia} required onChange={handleChangeAgregar} />
+              <input name="desarrollador" placeholder="Desarrollador" value={formData.desarrollador} required onChange={handleChangeAgregar} />
             </>
           )}
-          <button type="submit" style={{ backgroundColor: '#ffbb00', padding: '10px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Guardar en SQL</button>
+          <button type="submit" style={estiloBotonEnviar}>Guardar en SQL</button>
         </form>
       )}
 
@@ -188,11 +246,35 @@ const handleSubmitActualizar = async (e) => {
               <input name="stock" type="number" min="0" value={updateData.stock} onChange={handleChangeActualizar} required />
               <label style={{ color: 'white', marginBottom: '-5px' }}>Cuotas:</label>
               <input name="cuotas" type="number" min="0" value={updateData.cuotas} onChange={handleChangeActualizar} required />
-              
+
               {updateData.tipo === 'fisico' && (
-                <label style={{ color: 'white' }}><input name="envio" type="checkbox" checked={updateData.envio} onChange={handleChangeActualizar} /> Envío disponible</label>
+                <label style={{ color: 'white' }}>
+                  <input name="envioGratis" type="checkbox" checked={updateData.envioGratis} onChange={handleChangeActualizar} /> Envío gratis
+                </label>
               )}
-              <button type="submit" style={{ backgroundColor: '#ffbb00', padding: '10px', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold' }}>Actualizar SQL</button>
+              <button type="submit" style={estiloBotonEnviar}>Actualizar SQL</button>
+            </>
+          )}
+        </form>
+      )}
+
+      {/* FORMULARIO ELIMINAR */}
+      {modo === 'eliminar' && (
+        <form onSubmit={handleSubmitEliminar} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <select value={productoAEliminar} onChange={(e) => setProductoAEliminar(e.target.value)} required style={{ padding: '10px', borderRadius: '5px' }}>
+            <option value="">-- Seleccioná un producto --</option>
+            {productosApi.map(prod => (
+              <option key={prod.id} value={prod.id}>{prod.nombre}</option>
+            ))}
+          </select>
+
+          {productoParaBorrar && (
+            <>
+              <div style={{ backgroundColor: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '5px', color: 'white' }}>
+                <p style={{ margin: '0 0 5px 0' }}><strong>{productoParaBorrar.nombre}</strong></p>
+                <p style={{ margin: 0 }}>Precio: ${productoParaBorrar.precio} · Stock: {productoParaBorrar.stock} · Tipo: {productoParaBorrar.tipo}</p>
+              </div>
+              <button type="submit" style={{ ...estiloBotonEnviar, backgroundColor: 'red', color: 'white' }}>Eliminar de SQL</button>
             </>
           )}
         </form>

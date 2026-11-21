@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '../config';
 
 export default function AdminBodega() {
   const [modo, setModo] = useState('agregar');
@@ -40,7 +41,7 @@ export default function AdminBodega() {
 
     try {
       // Conexión real a tu API en Java
-      const res = await fetch('https://tiendaapi-xrv5.onrender.com/productos', {
+      const res = await fetch(`${API_URL}/productos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payloadBackend)
@@ -66,7 +67,7 @@ export default function AdminBodega() {
   // Cuando se abre la pestaña "Actualizar", hacemos un GET a la API
   useEffect(() => {
     if (modo === 'actualizar') {
-      fetch('https://tiendaapi-xrv5.onrender.com/productos')
+      fetch(`${API_URL}/productos`)
         .then(res => res.json())
         .then(data => setProductosApi(data))
         .catch(err => console.error("Error trayendo productos de la API:", err));
@@ -105,7 +106,7 @@ const handleSubmitActualizar = async (e) => {
          envio: updateData.envio
       };
 
-      const res = await fetch(`https://tiendaapi-xrv5.onrender.com/productos/${productoSeleccionado}`, {
+      const res = await fetch(`${API_URL}/productos/${productoSeleccionado}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payloadCompleto) 

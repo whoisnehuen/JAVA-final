@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
+import { API_URL } from '../config';
 
 export default function Home({ addToCart }) {
   // Estado para guardar el JSON que responde la API
@@ -9,7 +10,7 @@ export default function Home({ addToCart }) {
 
   // Hacemos el GET a Java al cargar la pantalla
   useEffect(() => {
-    fetch('https://tiendaapi-xrv5.onrender.com/productos')
+    fetch(`${API_URL}/productos`)
       .then(res => {
         if (!res.ok) throw new Error("Error en la respuesta del servidor");
         return res.json();

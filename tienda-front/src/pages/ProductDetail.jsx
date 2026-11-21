@@ -54,7 +54,7 @@ export default function ProductDetail({ addToCart }) {
           <h4 style={{ color: 'orange', marginTop: 0 }}>Especificaciones Físicas</h4>
           <p><strong>Marca:</strong> {producto.marca}</p>
           <p><strong>Color:</strong> {producto.color}</p>
-          <p><strong>Logística:</strong> {producto.envio ? "🚚 Envío a domicilio habilitado" : "🏠 Solo retiro presencial"}</p>
+          <p><strong>Logística:</strong> {producto.envioGratis ? "🚚 Envío a domicilio habilitado" : "🏠 Solo retiro presencial"}</p>
         </div>
       )}
 

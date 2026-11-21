@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { API_URL } from '../config';
 
 export default function ProductDetail({ addToCart }) {
   const { id } = useParams();
@@ -11,7 +12,7 @@ export default function ProductDetail({ addToCart }) {
 
   useEffect(() => {
     // Acá pedimos el producto a tu backend en Java
-    fetch(`https://tiendaapi-xrv5.onrender.com/productos/${id}`)
+    fetch(`${API_URL}/productos/${id}`)
       .then(res => {
         if (!res.ok) throw new Error("Producto no encontrado");
         return res.json();

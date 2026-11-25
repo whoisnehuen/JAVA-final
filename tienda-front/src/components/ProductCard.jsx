@@ -21,8 +21,8 @@ export default function ProductCard({ producto, addToCart }) {
         <h2>{producto.nombre}</h2>
         
         {/* Etiqueta visual pequeña para saber qué tipo de producto es */}
-        <span style={{ backgroundColor: producto.dtype === 'Digital' ? '#00a8ff' : 'orange', padding: '3px 8px', borderRadius: '5px', fontSize: '12px', color: 'black' }}>
-          {producto.dtype === 'Digital' ? 'Digital' : 'Físico'}
+        <span style={{ backgroundColor: producto.tipo === 'digital' ? '#00a8ff' : 'orange', padding: '3px 8px', borderRadius: '5px', fontSize: '12px', color: 'black' }}>
+          {producto.tipo== 'digital' ? 'digital' : 'físico'}
         </span>
         
         <img src={producto.imagen} alt={producto.nombre} style={{ width: '100%', maxWidth: '200px', marginTop: '10px' }} />
